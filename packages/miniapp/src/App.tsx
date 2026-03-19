@@ -27,6 +27,8 @@ function App() {
         >
           Count is {count}
         </button>
+		<p>width: {window.innerWidth}</p>
+		<p>height: {window.innerHeight}</p>
       </section>
 
       <div className="ticks"></div>
