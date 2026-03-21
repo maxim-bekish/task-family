@@ -5,11 +5,11 @@ import axios from 'axios';
 
 export const useAuthTelegramWidget = () => {
     return useMutation({
-        mutationFn: async (body) => {
+        mutationFn: async (body: TelegramLoginWidgetUser) => {
             try {
                 const { data } = await axios.post<TelegramLoginWidgetUser>(
                     `${import.meta.env.VITE_API_URL}${PATHS.authTg}`,
-                    body,
+                    body.user,
                 );
                 return data;
             } catch (e) {

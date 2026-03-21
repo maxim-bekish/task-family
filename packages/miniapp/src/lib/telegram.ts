@@ -1,12 +1,14 @@
 /** Ответ Login Widget после входа; проверяй hash на бэкенде. */
 export type TelegramLoginWidgetPayload = {
-    id: number;
-    first_name: string;
-    last_name?: string;
-    username?: string;
-    photo_url?: string;
-    auth_date: number;
-    hash: string;
+    user: {
+        id: number;
+        first_name: string;
+        last_name?: string;
+        username?: string;
+        photo_url?: string;
+        auth_date: number;
+        hash: string;
+    };
 };
 
 /** Данные из initDataUnsafe — только для UI; для доверенной авторизации используй initData на бэкенде. */

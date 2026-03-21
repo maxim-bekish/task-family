@@ -69,11 +69,11 @@ function App() {
         console.log('authData', payload);
 
         authTelegramWidget(payload);
-        console.log('error', error?.code);
-        setUser(authData);
+     
+        // setUser(authData);
 
-        setName(authData?.first_name ?? '');
-        setUserName(authData?.username ?? '');
+        // setName(authData?.first_name ?? '');
+        // setUserName(authData?.username ?? '');
     };
 
     return (
