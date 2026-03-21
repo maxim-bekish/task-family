@@ -8,7 +8,7 @@ export const useAuthTelegramWidget = () => {
         mutationFn: async (body: TelegramLoginWidgetUser) => {
             try {
                 const { data } = await axios.post<TelegramLoginWidgetUser>(
-                    `${import.meta.env.VITE_API_URL}${PATHS.authTg}`,
+                    `http://localhost:4000${PATHS.authTg}`,
                     body.user,
                 );
                 return data;
