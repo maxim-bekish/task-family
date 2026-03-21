@@ -16,15 +16,6 @@ import { Input } from '@/components/ui/input';
 const TELEGRAM_BOT_USERNAME =
     import.meta.env.VITE_TELEGRAM_BOT_USERNAME ?? 'manager_v_one_family_bot';
 
-function applyPayloadToFields(
-    d: Record<string, unknown>,
-    setName: (v: string) => void,
-    setUserName: (v: string) => void,
-) {
-    setName(typeof d.first_name === 'string' ? d.first_name : '');
-    setUserName(typeof d.username === 'string' ? d.username : '');
-}
-
 const userTest = {
     user: {
         id: 10000,
@@ -52,7 +43,7 @@ function App() {
         webApp?.ready();
         setShowBrowserLogin(!isTelegramMiniApp());
     }, []);
-    const { data: authData, error, isError, mutate: authTelegramWidget } = useAuthTelegramWidget();
+    const { mutate: authTelegramWidget } = useAuthTelegramWidget();
 
     const authUser = () => {
         const u = getTelegramUser();
