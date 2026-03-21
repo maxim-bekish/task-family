@@ -45,16 +45,34 @@ function App() {
     }, []);
     const { mutate: authTelegramWidget } = useAuthTelegramWidget();
 
-    const authUser = () => {
-        const u = getTelegramUser();
-        const initData = getTelegramInitData();
-        setUser(u);
-        setName(u?.first_name ?? '');
-        setUserName(u?.username ?? '');
-        if (import.meta.env.DEV) {
-            console.log('initData для бэкенда:', initData);
-        }
-    };
+	const authUser = () => {
+		const u = getTelegramUser();
+		const initData = getTelegramInitData();
+		const unsafe = getTelegramWebApp()?.initDataUnsafe;
+	
+		setUser(u);
+		setName(u?.first_name ?? '');
+		setUserName(u?.username ?? '');
+		if (import.meta.env.DEV) {
+			console.log('initData для бэкенда:', initData);
+		}
+	
+		if (!u || unsafe?.auth_date == null || typeof unsafe.hash !== 'string' || !unsafe.hash) {
+			return;
+		}
+	
+		authTelegramWidget({
+			user: {
+				id: u.id,
+				first_name: u.first_name,
+				last_name: u.last_name,
+				username: u.username,
+				photo_url: u.photo_url,
+				auth_date: unsafe.auth_date,
+				hash: unsafe.hash,
+			},
+		});
+	};
 
     const onTelegramWidgetAuth = (payload: TelegramLoginWidgetPayload) => {
         console.log('authData', payload);

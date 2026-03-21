@@ -9,7 +9,7 @@ export const authRouter = Router();
 
 authRouter.post(PATHS.authTg, async (req, res) => {
     try {
-        const payload = parseTelegramWidgetBody(req.body.user);
+        const payload = parseTelegramWidgetBody(req.body);
         const user = await upsertUserFromTelegramWidget(payload);
 
         return res.json({

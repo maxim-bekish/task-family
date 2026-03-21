@@ -51,7 +51,7 @@ export function TelegramLoginWidget({
             }
             container.replaceChildren();
         };
-    },  );
+    }, [botUsername, size, requestWriteAccess]);
 
     return <div ref={containerRef} className='telegram-login-widget flex justify-center' />;
 }
