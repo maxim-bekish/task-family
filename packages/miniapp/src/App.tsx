@@ -79,7 +79,7 @@ function App() {
 
         authTelegramWidget(payload);
      
-        // setUser(authData);
+        setUser(payload);
 
         // setName(authData?.first_name ?? '');
         // setUserName(authData?.username ?? '');
