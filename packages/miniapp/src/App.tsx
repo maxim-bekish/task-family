@@ -1,103 +1,138 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from './assets/vite.svg';
-import heroImg from './assets/hero.png';
-import './App.css';
+import { useEffect, useState } from 'react';
 import { Button } from './components/ui/button';
+import { TelegramLoginWidget } from './components/TelegramLoginWidget';
+import { useAuthTelegramWidget } from './lib/api';
+import {
+    getTelegramInitData,
+    getTelegramUser,
+    getTelegramWebApp,
+    isTelegramMiniApp,
+    type TelegramLoginWidgetPayload,
+    type TelegramWebAppUser,
+} from './lib/telegram';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+
+const TELEGRAM_BOT_USERNAME =
+    import.meta.env.VITE_TELEGRAM_BOT_USERNAME ?? 'manager_v_one_family_bot';
+
+function applyPayloadToFields(
+    d: Record<string, unknown>,
+    setName: (v: string) => void,
+    setUserName: (v: string) => void,
+) {
+    setName(typeof d.first_name === 'string' ? d.first_name : '');
+    setUserName(typeof d.username === 'string' ? d.username : '');
+}
+
+const userTest = {
+    user: {
+        id: 10000,
+        // id: 495415408,
+        // first_name: 'Максим',
+        first_name: 'Мак1симTest',
+        username: 'max1a_max_test',
+        photo_url: 'https://t.me/i/userpic/320/tRLyXd3OnldEG7rag4AAV0Yx_25m4bVUERLA4SUhVEQ.jpg',
+        auth_date: 1774148048,
+        // hash: '413f6742dcdc1f4747c3e86731c8ab00c9ce86968f0629309a04f42a638a89c7',
+        hash: '413f6712dcdc1f4757c3e85731c8ab00c9ce86968f0529309a04f42a638a89c7',
+    },
+};
 
 function App() {
-    const [count, setCount] = useState(0);
+    const [user, setUser] = useState<
+        TelegramWebAppUser | TelegramLoginWidgetPayload | Record<string, unknown> | null
+    >(null);
+    const [name, setName] = useState<string>('');
+    const [userName, setUserName] = useState<string>('');
+    const [showBrowserLogin, setShowBrowserLogin] = useState(false);
+
+    useEffect(() => {
+        const webApp = getTelegramWebApp();
+        webApp?.ready();
+        setShowBrowserLogin(!isTelegramMiniApp());
+    }, []);
+    const { data: authData, error, isError, mutate: authTelegramWidget } = useAuthTelegramWidget();
+
+    const authUser = () => {
+        const u = getTelegramUser();
+        const initData = getTelegramInitData();
+        setUser(u);
+        setName(u?.first_name ?? '');
+        setUserName(u?.username ?? '');
+        if (import.meta.env.DEV) {
+            console.log('initData для бэкенда:', initData);
+        }
+    };
+
+    const onTelegramWidgetAuth = (payload: TelegramLoginWidgetPayload) => {
+        console.log('authData', payload);
+
+        authTelegramWidget(payload);
+        console.log('error', error?.code);
+        setUser(authData);
+
+        setName(authData?.first_name ?? '');
+        setUserName(authData?.username ?? '');
+    };
 
     return (
         <>
-            <section id='center'>
-                <div className='hero'>
-                    <img src={heroImg} className='base' width='170' height='179' alt='' />
-                    <img src={reactLogo} className='framework' alt='React logo' />
-                    <img src={viteLogo} className='vite' alt='Vite logo' />
-                </div>
-                <div>
-                    <h1>Get started</h1>
-                    <p>
-                        Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
+            <h1 className='text-3xl font-bold text-center mt-10'>Привет</h1>
+
+            {showBrowserLogin && (
+                <div className='mt-8 flex flex-col items-center gap-2'>
+                    <p className='text-muted-foreground text-sm text-center px-4'>
+                        Вход через Telegram (браузер)
                     </p>
+                    <TelegramLoginWidget
+                        botUsername={TELEGRAM_BOT_USERNAME}
+                        onAuth={onTelegramWidgetAuth}
+                    />
+                    {/* {authError && (
+                        <p className='text-destructive text-sm text-center px-4 max-w-md'>
+                            <pre>{authError}</pre>
+                        </p>
+                    )} */}
                 </div>
-                <Button className='counter' onClick={() => setCount((count) => count + 1)}>
-                    Count is {count}
+            )}
+
+            {!showBrowserLogin && (
+                <Button className='mx-auto block mt-10' onClick={authUser}>
+                    Авторизоваться
                 </Button>
-                <p>width: {window.innerWidth}</p>
-                <p>height: {window.innerHeight}</p>
-            </section>
+            )}
 
-            <div className='ticks'></div>
+            <Button onClick={() => onTelegramWidgetAuth(userTest)}>Тест</Button>
+            <FieldGroup>
+                <Field>
+                    <FieldLabel htmlFor='fieldgroup-name'>Имя</FieldLabel>
+                    <Input
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        id='fieldgroup-name'
+                        placeholder='Имя пользователя'
+                    />
+                </Field>
+                <Field>
+                    <FieldLabel htmlFor='fieldgroup-email'>Логин</FieldLabel>
+                    <Input
+                        value={userName}
+                        onChange={(e) => setUserName(e.target.value)}
+                        id='fieldgroup-login'
+                        type='text'
+                        placeholder='Логин'
+                    />
+                </Field>
+                <Field orientation='horizontal'>
+                    <Button type='reset' variant='outline'>
+                        Сбросить
+                    </Button>
+                    <Button type='submit'>Сохранить</Button>
+                </Field>
+            </FieldGroup>
 
-            <section id='next-steps'>
-                <div id='docs'>
-                    <svg className='icon' role='presentation' aria-hidden='true'>
-                        <use href='/icons.svg#documentation-icon'></use>
-                    </svg>
-                    <h2>Documentation</h2>
-                    <p>Your questions, answered</p>
-                    <ul>
-                        <li>
-                            <a href='https://vite.dev/' target='_blank'>
-                                <img className='logo' src={viteLogo} alt='' />
-                                Explore Vite
-                            </a>
-                        </li>
-                        <li>
-                            <a href='https://react.dev/' target='_blank'>
-                                <img className='button-icon' src={reactLogo} alt='' />
-                                Learn more
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div id='social'>
-                    <svg className='icon' role='presentation' aria-hidden='true'>
-                        <use href='/icons.svg#social-icon'></use>
-                    </svg>
-                    <h2>Connect with us</h2>
-                    <p>Join the Vite community</p>
-                    <ul>
-                        <li>
-                            <a href='https://github.com/vitejs/vite' target='_blank'>
-                                <svg className='button-icon' role='presentation' aria-hidden='true'>
-                                    <use href='/icons.svg#github-icon'></use>
-                                </svg>
-                                GitHub
-                            </a>
-                        </li>
-                        <li>
-                            <a href='https://chat.vite.dev/' target='_blank'>
-                                <svg className='button-icon' role='presentation' aria-hidden='true'>
-                                    <use href='/icons.svg#discord-icon'></use>
-                                </svg>
-                                Discord
-                            </a>
-                        </li>
-                        <li>
-                            <a href='https://x.com/vite_js' target='_blank'>
-                                <svg className='button-icon' role='presentation' aria-hidden='true'>
-                                    <use href='/icons.svg#x-icon'></use>
-                                </svg>
-                                X.com
-                            </a>
-                        </li>
-                        <li>
-                            <a href='https://bsky.app/profile/vite.dev' target='_blank'>
-                                <svg className='button-icon' role='presentation' aria-hidden='true'>
-                                    <use href='/icons.svg#bluesky-icon'></use>
-                                </svg>
-                                Bluesky
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </section>
-
-            <div className='ticks'></div>
-            <section id='spacer'></section>
+            {user && <pre>{JSON.stringify(user, null, 2)}</pre>}
         </>
     );
 }

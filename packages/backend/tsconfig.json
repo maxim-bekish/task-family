@@ -11,7 +11,14 @@
         "resolveJsonModule": true,
         "outDir": "dist",
         "rootDir": "src",
-        "types": ["node"]
+        "types": ["node"],
+        "baseUrl": ".",
+        "paths": {
+            "@task-family/shared": [
+                "../../node_modules/@task-family/shared",
+                "../shared"
+            ]
+        }
     },
     "include": ["src"],
     "exclude": ["node_modules", "dist"]

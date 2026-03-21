@@ -1,23 +1,31 @@
 FROM node:22-bookworm-slim
 
+RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-# Prisma при генерации читает prisma.config.ts и требует DATABASE_URL.
-# На этапе docker build переменные из env_file ещё не доступны, поэтому задаём дефолт для докера.
 ENV DATABASE_URL="postgresql://postgres:postgres@postgres:5432/task_family?schema=public"
 
-COPY package.json ./
+COPY package.json package-lock.json ./
+COPY packages/backend/package.json ./packages/backend/
+COPY packages/shared/package.json ./packages/shared/
+COPY packages/miniapp/package.json ./packages/miniapp/
 
-COPY tsconfig.json ./
-COPY prisma ./prisma
-COPY prisma.config.ts ./
+COPY packages/shared ./packages/shared
 
 RUN npm install
-RUN npx prisma generate
+RUN npm run build -w @task-family/shared
 
-COPY src ./src
+COPY packages/backend/prisma ./packages/backend/prisma
+COPY packages/backend/prisma.config.ts ./packages/backend/
+COPY packages/backend/tsconfig.json ./packages/backend/
+
+WORKDIR /app/packages/backend
+RUN npx prisma generate
+WORKDIR /app
+
+COPY packages/backend/src ./packages/backend/src
 
 EXPOSE 4000
 
-CMD ["npm", "run", "dev"]
-
+CMD ["sh", "-c", "npm run build -w @task-family/shared && npm run dev --prefix packages/backend"]

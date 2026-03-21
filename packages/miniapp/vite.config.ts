@@ -13,6 +13,15 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './src'),
+            '@task-family/shared': path.resolve(__dirname, '../shared/src/index.ts'),
         },
+    },
+    // Не пребандлить workspace-пакет — иначе часто ломается резолв .ts → .js
+    optimizeDeps: {
+        exclude: ['@task-family/shared'],
+    },
+    server: {
+        host: true,
+        allowedHosts: true,
     },
 });

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15
@@ -34,7 +32,8 @@ services:
 
   backend:
     build:
-      context: ./packages/backend
+      context: .
+      dockerfile: packages/backend/Dockerfile
     container_name: task-family-backend
     env_file:
       - ./packages/backend/.env
@@ -43,9 +42,13 @@ services:
     depends_on:
       - postgres
     volumes:
-      - ./packages/backend:/app
-      - /app/node_modules
-    command: npm run dev
+      - ./packages/backend/src:/app/packages/backend/src
+      - ./packages/shared:/app/packages/shared
+      - ./packages/backend/prisma:/app/packages/backend/prisma
+      - ./packages/backend/prisma.config.ts:/app/packages/backend/prisma.config.ts:ro
+      - ./packages/backend/tsconfig.json:/app/packages/backend/tsconfig.json:ro
+      # Не монтируем /app/node_modules: анонимный том один раз создаётся пустым и навсегда
+      # перекрывает node_modules из образа — пропадают линки workspace (@task-family/shared).
 
 volumes:
   postgres_data:

@@ -4,6 +4,7 @@ import cors from 'cors';
 
 import { env } from './config/env';
 import { prisma } from './prisma';
+import { authRouter } from './routes/auth';
 import { healthRouter } from './routes/health';
 import { startTelegramBot } from './bot/telegramBot';
 
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use(healthRouter);
+app.use(authRouter);
 
 async function main() {
     // Подключимся к БД на старте, чтобы быстрее понять проблемы в конфиге.

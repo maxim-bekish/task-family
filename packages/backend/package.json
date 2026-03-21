@@ -8,7 +8,8 @@
         "build": "tsc -p tsconfig.json",
         "start": "node dist/index.js",
         "prisma:generate": "prisma generate",
-        "prisma:migrate": "prisma migrate dev"
+        "prisma:migrate": "prisma migrate dev",
+        "prisma:deploy": "prisma migrate deploy"
     },
     "keywords": [],
     "author": "",
@@ -21,16 +22,15 @@
         "cors": "^2.8.6",
         "dotenv": "^17.3.1",
         "express": "^5.2.1",
-        "jsonwebtoken": "^9.0.3",
         "pg": "^8.20.0",
         "telegraf": "^4.16.3",
-        "zod": "^4.3.6"
+        "zod": "^4.3.6",
+		"@task-family/shared": "*"
     },
     "devDependencies": {
         "@types/bcrypt": "^6.0.0",
         "@types/cors": "^2.8.19",
         "@types/express": "^5.0.6",
-        "@types/jsonwebtoken": "^9.0.10",
         "@types/node": "^25.5.0",
         "nodemon": "^3.1.14",
         "prisma": "^7.5.0",

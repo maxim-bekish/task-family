@@ -47,7 +47,7 @@
 |----------|---------|
 | Shell в backend | `docker-compose exec backend sh` |
 | Установить зависимости в backend | `docker-compose exec backend npm install` |
-| Prisma migrate (внутри сети Docker) | `docker-compose exec backend npx prisma migrate deploy` |
+| Prisma migrate deploy | `docker-compose exec backend sh -c "cd /app/packages/backend && npx prisma migrate deploy"` |
 
 ---
 

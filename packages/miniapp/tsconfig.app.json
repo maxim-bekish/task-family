@@ -10,7 +10,8 @@
 
         "baseUrl": ".",
         "paths": {
-            "@/*": ["./src/*"]
+            "@/*": ["./src/*"],
+            "@task-family/shared": ["../shared/src/index.ts"]
         },
 
         /* Bundler mode */
