@@ -1,6 +1,6 @@
 import { PATHS } from '@task-family/shared';
 import type { ApiErrorJson, TelegramLoginWidgetUser } from '@task-family/shared';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 export const useAuthTelegramWidget = () => {
@@ -17,6 +17,16 @@ export const useAuthTelegramWidget = () => {
                     throw e.response?.data as ApiErrorJson;
                 }
             }
+        },
+    });
+};
+
+export const useGetUsersQuery = () => {
+    return useQuery({
+        queryKey: ['users'],
+        queryFn: async () => {
+            const { data } = await axios.get<TelegramLoginWidgetUser>(`http://localhost:4000${PATHS.testUsers}`);
+            return data;
         },
     });
 };
