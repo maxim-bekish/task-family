@@ -87,7 +87,7 @@ export default function HomePage() {
               {currentUser.initials}
             </AvatarFallback>
           </Avatar>
-          <h1 className="text-2xl font-bold tracking-tight">Мои желания</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Yes желания</h1>
         </div>
         <Link href="/add">
           <Button variant={'default'} className="gap-1.5 shadow-sm">
